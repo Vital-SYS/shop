@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\BasketController;
-use App\Http\Controllers\CatalogController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -11,78 +9,146 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 |
 | Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
 |
 */
+
+/*
+ * Главная страница интернет-магазина
+ */
+Route::get('/', \App\Http\Controllers\IndexController::class)->name('index');
+
+/*
+ * Страницы «Доставка», «Контакты» и прочие
+ */
+Route::get('/page/{page:slug}', \App\Http\Controllers\PageController::class)->name('page.show');
+
+/*
+ * Каталог товаров: категория, бренд и товар
+ */
+Route::group([
+    'as' => 'catalog.', // имя маршрута, например catalog.index
+    'prefix' => 'catalog', // префикс маршрута, например catalog/index
+], function () {
+    // главная страница каталога
+    Route::get('index', [\App\Http\Controllers\CatalogController::class, 'index'])
+        ->name('index');
+    // категория каталога товаров
+    Route::get('category/{category:slug}', [\App\Http\Controllers\CatalogController::class, 'category'])
+        ->name('category');
+    // бренд каталога товаров
+    Route::get('brand/{brand:slug}', [\App\Http\Controllers\CatalogController::class, 'brand'])
+        ->name('brand');
+    // страница товара каталога
+    Route::get('product/{product:slug}', [\App\Http\Controllers\CatalogController::class, 'product'])
+        ->name('product');
+    // страница результатов поиска
+    Route::get('search', 'CatalogController@search')
+        ->name('search');
+});
+
+/*
+ * Корзина покупателя
+ */
+Route::group([
+    'as' => 'basket.', // имя маршрута, например basket.index
+    'prefix' => 'basket', // префикс маршрута, например basket/index
+], function () {
+    // список всех товаров в корзине
+    Route::get('index', [\App\Http\Controllers\BasketController::class, 'index'])
+        ->name('index');
+    // страница с формой оформления заказа
+    Route::get('checkout', [\App\Http\Controllers\BasketController::class, 'checkout'])
+        ->name('checkout');
+    // получение данных профиля для оформления
+    Route::post('profile', [\App\Http\Controllers\BasketController::class, 'profile'])
+        ->name('profile');
+    // отправка данных формы для сохранения заказа в БД
+    Route::post('save-order', [\App\Http\Controllers\BasketController::class, 'saveOrder'])
+        ->name('saveOrder');
+    // страница после успешного сохранения заказа в БД
+    Route::get('success', [\App\Http\Controllers\BasketController::class, 'success'])
+        ->name('success');
+    // отправка формы добавления товара в корзину
+    Route::post('add/{id}', [\App\Http\Controllers\BasketController::class, 'add'])
+        ->where('id', '[0-9]+')
+        ->name('add');
+    // отправка формы изменения кол-ва отдельного товара в корзине
+    Route::post('plus/{id}', [\App\Http\Controllers\BasketController::class, 'plus'])
+        ->where('id', '[0-9]+')
+        ->name('plus');
+    // отправка формы изменения кол-ва отдельного товара в корзине
+    Route::post('minus/{id}', [\App\Http\Controllers\BasketController::class, 'minus'])
+        ->where('id', '[0-9]+')
+        ->name('minus');
+    // отправка формы удаления отдельного товара из корзины
+    Route::post('remove/{id}', [\App\Http\Controllers\BasketController::class, 'remove'])
+        ->where('id', '[0-9]+')
+        ->name('remove');
+    // отправка формы для удаления всех товаров из корзины
+    Route::post('clear', [\App\Http\Controllers\BasketController::class, 'clear'])
+        ->name('clear');
+});
+
+/*
+ * Регистрация, вход в ЛК, восстановление пароля
+ */
 Route::name('user.')->prefix('user')->group(function () {
-    Route::get('index', [\App\Http\Controllers\UserController::class, 'index'])->name('index');
     Auth::routes();
 });
 
-Route::get('/home', 'UserController@index')->name('home');
+/*
+ * Личный кабинет зарегистрированного пользователя
+ */
+Route::group([
+    'as' => 'user.', // имя маршрута, например user.index
+    'prefix' => 'user', // префикс маршрута, например user/index
+    'middleware' => ['auth'] // один или несколько посредников
+], function () {
+    // главная страница личного кабинета пользователя
+    Route::get('index', [\App\Http\Controllers\UserController::class, 'index'])->name('index');
+    // CRUD-операции над профилями пользователя
+    Route::resource('profile', \App\Http\Controllers\ProfileController::class);
+    // просмотр списка заказов в личном кабинете
+    Route::get('order', 'OrderController@index')->name('order.index');
+    // просмотр отдельного заказа в личном кабинете
+    Route::get('order/{order}', 'OrderController@show')->name('order.show');
+});
 
-
-
+/*
+ * Панель управления магазином для администратора сайта
+ */
 Route::group([
     'as' => 'admin.', // имя маршрута, например admin.index
     'prefix' => 'admin', // префикс маршрута, например admin/index
     'middleware' => ['auth', 'admin'] // один или несколько посредников
 ], function () {
     // главная страница панели управления
-    Route::get('index', \App\Http\Controllers\Admin\IndexController::class)->name('index');
-    // доп.маршрут для просмотра товаров категории
-
-    Route::get('product/category/{category}', 'ProductController@category')
+    Route::get('index', [\App\Http\Controllers\Admin\IndexController::class, '__invoke'])->name('index');
+    // CRUD-операции над категориями каталога
+    Route::resource('category', \App\Http\Controllers\Admin\CategoryController::class);
+    // CRUD-операции над брендами каталога
+    Route::resource('brand', \App\Http\Controllers\Admin\BrandController::class);
+    // CRUD-операции над товарами каталога
+    Route::resource('product', \App\Http\Controllers\Admin\ProductController::class);
+    // доп.маршрут для показа товаров категории
+    Route::get('product/category/{category}', [\App\Http\Controllers\Admin\ProductController::class, 'category'])
         ->name('product.category');
-
-    Route::get('/page/{page:slug}', [\App\Http\Controllers\PageController::class, '__invoke'])->name('page.show');
-
+    // просмотр и редактирование заказов
+    Route::resource('order', \App\Http\Controllers\Admin\OrderController::class, ['except' => [
+        'create', 'store', 'destroy'
+    ]]);
+    // просмотр и редактирование пользователей
+    Route::resource('user', \App\Http\Controllers\Admin\UserController::class, ['except' => [
+        'create', 'store', 'show', 'destroy'
+    ]]);
+    // CRUD-операции над страницами сайта
+    Route::resource('page', \App\Http\Controllers\Admin\PageController::class);
+    // загрузка изображения из wysiwyg-редактора
     Route::post('page/upload/image', [\App\Http\Controllers\Admin\PageController::class, 'uploadImage'])
         ->name('page.upload.image');
-    // удаление изображения в редакторе
+    // удаление изображения в wysiwyg-редакторе
     Route::delete('page/remove/image', [\App\Http\Controllers\Admin\PageController::class, 'removeImage'])
         ->name('page.remove.image');
-    // CRUD-операции
-    Route::resources([
-        'category' => \App\Http\Controllers\Admin\CategoryController::class,
-        'brand' => \App\Http\Controllers\Admin\BrandController::class,
-        'product' => \App\Http\Controllers\Admin\ProductController::class,
-        'order' => \App\Http\Controllers\Admin\OrderController::class,
-        'user' => \App\Http\Controllers\Admin\UserController::class,
-        'page' => \App\Http\Controllers\Admin\PageController::class,
-    ]);
 });
-
-Route::get('/', 'App\Http\Controllers\IndexController')->name('index');
-
-Route::get('/catalog/index', [CatalogController::class, 'index'])->name('catalog.index');
-Route::get('/catalog/category/{slug}', [CatalogController::class, 'category'])->name('catalog.category');
-Route::get('/catalog/brand/{slug}', [CatalogController::class, 'brand'])->name('catalog.brand');
-Route::get('/catalog/product/{slug}', [CatalogController::class, 'product'])->name('catalog.product');
-
-Route::get('/basket/index', [BasketController::class, 'index'])->name('basket.index');
-Route::get('/basket/checkout', [BasketController::class, 'checkout'])->name('basket.checkout');
-
-Route::post('/basket/add/{id}', [BasketController::class, 'add'])
-    ->where('id', '[0-9]+')
-    ->name('basket.add');
-
-Route::post('/basket/plus/{id}', [BasketController::class, 'plus'])
-    ->where('id', '[0-9]+')
-    ->name('basket.plus');
-
-Route::post('/basket/minus/{id}', [BasketController::class, 'minus'])
-    ->where('id', '[0-9]+')
-    ->name('basket.minus');
-
-Route::post('/basket/remove/{id}', [BasketController::class, 'remove'])
-    ->where('id', '[0-9]+')
-    ->name('basket.remove');
-
-Route::post('/basket/clear', [BasketController::class, 'clear'])->name('basket.clear');
-
-Route::post('/basket/save-order', [BasketController::class, 'saveOrder'])->name('basket.save-order');
-
-Route::get('/basket/success', [BasketController::class, 'success'])->name('basket.success');
-

@@ -78,4 +78,14 @@ class User extends Authenticatable
     {
         return Carbon::createFromFormat('Y-m-d H:i:s', $value)->timezone('Europe/Moscow');
     }
+
+    /**
+     * Связь «один ко многим» таблицы `users` с таблицей `profiles`
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function profiles()
+    {
+        return $this->hasMany(Profile::class);
+    }
 }

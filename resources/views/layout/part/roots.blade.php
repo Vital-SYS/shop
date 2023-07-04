@@ -3,7 +3,7 @@
     <ul>
         @foreach($items as $item)
             <li>
-                <a href="{{ route('catalog.category', ['slug' => $item->slug]) }}">{{ $item->name }}</a>
+                <a href="{{ route('catalog.category', ['category' => $item->slug]) }}">{{ $item->name }}</a>
                 @isset($item->children)
                     <span class="badge badge-dark">
                     <i class="fa fa-plus"></i> <!-- бейдж с плюсом или минусом -->
@@ -11,9 +11,7 @@
                     <ul>
                         @foreach($item->children as $child)
                             <li>
-                                <a href="{{ route('catalog.category', ['slug' => $child->slug]) }}">
-                                    {{ $child->name }}
-                                </a>
+                                <a href="{{ route('catalog.category', ['category' => $item->slug]) }}">{{ $item->name }}</a>
                             </li>
                         @endforeach
                     </ul>

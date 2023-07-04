@@ -7,7 +7,7 @@
             <img src="https://via.placeholder.com/400x120" alt="" class="img-fluid">
         </div>
         <div class="card-footer">
-            <a href="{{ route('catalog.category', ['slug' => $category->slug]) }}"
+            <a href="{{ route('catalog.category', ['category' => $category->slug]) }}"
                class="btn btn-dark">Перейти в раздел</a>
         </div>
     </div>

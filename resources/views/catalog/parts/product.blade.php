@@ -13,7 +13,7 @@
                 @csrf
                 <button type="submit" class="btn btn-success">Добавить в корзину</button>
             </form>
-            <a href="{{ route('catalog.product', ['slug' => $product->slug]) }}"
+            <a href="{{ route('catalog.product', ['product' => $product->slug]) }}"
                class="btn btn-dark float-right">Перейти к товару</a>
         </div>
     </div>
