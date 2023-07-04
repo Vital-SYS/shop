@@ -5,68 +5,78 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Магазин</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
-          integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{{ $title ?? 'Интернет-магазин' }}</title>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+          integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+          crossorigin="anonymous"/>
+    <link rel="stylesheet" href="{{ asset('css/site.css') }}">
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/site.js') }}"></script>
 </head>
 <body>
-<header class="p-3 bg-dark text-white">
-    <div class="container">
-        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-            <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap">
-                    <use xlink:href="#bootstrap"></use>
-                </svg>
-            </a>
-
-            <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                <li><a href="{{route('index')}}" class="nav-link px-2 text-secondary">Магазин</a></li>
-                <li><a href="{{route('catalog.index')}}" class="nav-link px-2 text-white">Каталог</a></li>
-                <li><a href="#" class="nav-link px-2 text-white">Доставка</a></li>
-                <li><a href="#" class="nav-link px-2 text-white">Товары</a></li>
+<div class="container">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <!-- Бренд и кнопка «Гамбургер» -->
+        <a class="navbar-brand" href="{{ route('index') }}">Магазин</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse"
+                data-target="#navbar-example" aria-controls="navbar-example"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- Основная часть меню (может содержать ссылки, формы и прочее) -->
+        <div class="collapse navbar-collapse" id="navbar-example">
+            <!-- Этот блок расположен слева -->
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('catalog.index') }}">Каталог</a>
+                </li>
+                @include('layout.part.pages')
             </ul>
 
-            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
-                <input type="search" class="form-control form-control-dark" placeholder="Search..." aria-label="Search">
+            <!-- Этот блок расположен посередине -->
+            <form action="/" class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" name="query"
+                       placeholder="Поиск по каталогу" aria-label="Search">
+                <button class="btn btn-outline-light my-2 my-sm-0"
+                        type="submit">Поиск
+                </button>
             </form>
 
-            <div class="text-end">
-                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                    <li class="nav-item">
-                        <a class="nav-link @if ($positions) text-success @endif" href="{{ route('basket.index') }}">
-                            Корзина
-                            @if ($positions)
-                                ({{ $positions }})
-                            @endif
-                        </a>
-                    </li>
-                    @guest
-                        <li class="nav-item">
-                            <a class="nav-link px-2 text-white" href="{{ route('user.login') }}">Войти</a>
-                        </li>
-                        @if (Route::has('user.register'))
-                            <li class="nav-item">
-                                <a class="nav-link px-2 text-white" href="{{ route('user.register') }}">Регистрация</a>
-                            </li>
+            <!-- Этот блок расположен справа -->
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item" id="top-basket">
+                    <a class="nav-link @if ($positions) text-success @endif"
+                       href="{{ route('basket.index') }}">
+                        Корзина
+                        @if ($positions)
+                            ({{ $positions }})
                         @endif
-                    @else
+                    </a>
+                </li>
+                @guest
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('user.login') }}">Войти</a>
+                    </li>
+                    @if (Route::has('user.register'))
                         <li class="nav-item">
-                            <a class="nav-link px-2 text-white" href="{{ route('user.index') }}">Личный кабинет</a>
+                            <a class="nav-link" href="{{ route('user.register') }}">Регистрация</a>
                         </li>
                     @endif
-                </ul>
-            </div>
+                @else
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('user.index') }}">Личный кабинет</a>
+                    </li>
+                @endif
+            </ul>
         </div>
-    </div>
-</header>
+    </nav>
 
-<div class="container p-5">
     <div class="row">
         <div class="col-md-3">
-            @include('layout.parts.roots')
-            @include('layout.parts.brands')
+            @include('layout.part.roots')
+            @include('layout.part.brands')
         </div>
         <div class="col-md-9">
             @if ($message = Session::get('success'))
@@ -79,7 +89,7 @@
             @endif
 
             @if ($errors->any())
-                <div class="alert alert-danger alert-dismissible mt-0" role="alert">
+                <div class="alert alert-danger alert-dismissible mt-4" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Закрыть">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -95,11 +105,5 @@
         </div>
     </div>
 </div>
-
 </body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
-        crossorigin="anonymous">
-</script>
-<script src="{{asset('js/site.js')}}"></script>
 </html>

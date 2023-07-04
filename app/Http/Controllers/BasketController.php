@@ -1,83 +1,136 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Basket;
 use App\Models\Order;
+use App\Services\BasketService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\{Cookie};
 
-class BasketController extends Controller {
 
-    private $basket;
+class BasketController extends Controller
+{
+    private $basketService;
 
-    public function __construct() {
-        $this->basket = Basket::getBasket();
+    public function __construct(BasketService $basketService)
+    {
+        $this->basketService = $basketService;
     }
 
     /**
-     * Показывает корзину покупателя
+     * Отображение элементов
      */
-    public function index() {
-        $products = $this->basket->products;
-        return view('basket.index', compact('products'));
+    public function index(Request $request)
+    {
+        $basketId = $request->cookie('basket_id');
+
+        if (!empty($basketId)) {
+            $products = $this->basketService->getBasketProducts($basketId);
+            return view('basket.index', compact('products'));
+        } else {
+            abort(404);
+        }
     }
 
     /**
-     * Форма оформления заказа
+     * Добавление элементов в корзину
      */
-    public function checkout() {
-        return view('basket.checkout');
-    }
-
-    /**
-     * Добавляет товар с идентификатором $id в корзину
-     */
-    public function add(Request $request, $id) {
+    public function add(Request $request, $productId)
+    {
+        $basketId = $request->cookie('basket_id');
         $quantity = $request->input('quantity') ?? 1;
-        $this->basket->increase($id, $quantity);
-        // выполняем редирект обратно на ту страницу,
-        // где была нажата кнопка «В корзину»
-        return back();
+
+        if (empty($basketId)) {
+            $basket = $this->basketService->createBasket();
+            $basketId = $basket->id;
+        }
+
+        $this->basketService->addProductToBasket($basketId, $productId, $quantity);
+
+        return back()->withCookie(cookie('basket_id', $basketId));
     }
 
     /**
-     * Увеличивает кол-во товара $id в корзине на единицу
+     * Прибавление кол-ва товаров в позиции
      */
-    public function plus($id) {
-        $this->basket->increase($id);
-        // выполняем редирект обратно на страницу корзины
+    public function plus(Request $request, $productId)
+    {
+        $basketId = $request->cookie('basket_id');
+
+        if (empty($basketId)) {
+            abort(404);
+        }
+
+        $this->basketService->changeProductQuantity($basketId, $productId, 1);
+
+        return redirect()
+            ->route('basket.index')
+            ->withCookie(cookie('basket_id', $basketId, 525600));
+    }
+
+    /**
+     * Убавление кол-ва товаров в позиции
+     */
+    public function minus(Request $request, $productId)
+    {
+        $basketId = $request->cookie('basket_id');
+
+        if (empty($basketId)) {
+            abort(404);
+        }
+
+        $this->basketService->changeProductQuantity($basketId, $productId, -1);
+
+        return redirect()
+            ->route('basket.index')
+            ->withCookie(cookie('basket_id', $basketId, 525600));
+    }
+
+    /**
+     * Удаление элемента в корзине
+     */
+    public function remove(Request $request, $productId)
+    {
+        $basketId = $request->cookie('basket_id');
+
+        if (empty($basketId)) {
+            abort(404);
+        }
+
+        try {
+            $this->basketService->removeProductFromBasket($basketId, $productId);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+
         return redirect()->route('basket.index');
     }
 
     /**
-     * Уменьшает кол-во товара $id в корзине на единицу
+     * Очистка корзины
      */
-    public function minus($id) {
-        $this->basket->decrease($id);
-        // выполняем редирект обратно на страницу корзины
+    public function clear(Request $request)
+    {
+        $basketId = $request->cookie('basket_id');
+
+        if (empty($basketId)) {
+            abort(404);
+        }
+
+        try {
+            $this->basketService->clearBasket($basketId);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+
         return redirect()->route('basket.index');
     }
 
     /**
-     * Возвращает объект корзины; если не найден — создает новый
+     * Сохранение заказа в БД
      */
-
-    public function remove($id) {
-        $this->basket->remove($id);
-        // выполняем редирект обратно на страницу корзины
-        return redirect()->route('basket.index');
-    }
-
-    /**
-     * Полностью очищает содержимое корзины покупателя
-     */
-    public function clear() {
-        $this->basket->delete();
-        // выполняем редирект обратно на страницу корзины
-        return redirect()->route('basket.index');
-    }
-
-    public function saveOrder(Request $request) {
+    public function saveOrder(Request $request)
+    {
         // проверяем данные формы оформления
         $this->validate($request, [
             'name' => 'required|max:255',
@@ -108,8 +161,9 @@ class BasketController extends Controller {
 
         return redirect()
             ->route('basket.success')
-            ->with('order_id', $order->id);
+            ->with('success', 'Ваш заказ успешно размещен');
     }
+
     /**
      * Сообщение об успешном оформлении заказа
      */

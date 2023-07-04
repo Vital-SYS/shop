@@ -7,6 +7,7 @@ use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -44,7 +45,8 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function sendPasswordResetNotification($token) {
+    public function sendPasswordResetNotification($token)
+    {
         $notification = new ResetPassword($token);
         $notification->createUrlUsing(function ($user, $token) {
             return url(route('user.password.reset', [
@@ -53,5 +55,27 @@ class User extends Authenticatable
             ]));
         });
         $this->notify($notification);
+    }
+
+    /**
+     * Преобразует дату и время регистрации пользователя из UTC в Europe/Moscow
+     *
+     * @param $value
+     * @return \Carbon\Carbon|false
+     */
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::createFromFormat('Y-m-d H:i:s', $value)->timezone('Europe/Moscow');
+    }
+
+    /**
+     * Преобразует дату и время обновления пользователя из UTC в Europe/Moscow
+     *
+     * @param $value
+     * @return \Carbon\Carbon|false
+     */
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::createFromFormat('Y-m-d H:i:s', $value)->timezone('Europe/Moscow');
     }
 }

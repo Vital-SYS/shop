@@ -139,8 +139,27 @@ return [
     */
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
+        'name' => [
+            'required' => 'Поле «:attribute» обязательно для заполнения',
+            'max' => 'Поле «:attribute» должно быть не больше :max символов',
+        ],
+        'email' => [
+            'required' => 'Поле «:attribute» обязательно для заполнения',
+            'max' => 'Поле «:attribute» должно быть не больше :max символов',
+        ],
+        'phone' => [
+            'required' => 'Поле «:attribute» обязательно для заполнения',
+            'max' => 'Поле «:attribute» должно быть не больше :max символов',
+        ],
+        'address' => [
+            'required' => 'Поле «:attribute» обязательно для заполнения',
+            'max' => 'Поле «:attribute» должно быть не больше :max символов',
+        ],
+        'slug' => [
+            'required' => 'Поле «:attribute» обязательно для заполнения',
+            'unique' => 'Поле «:attribute» должно быть уникальным значением',
+            'regex' => 'Поле «:attribute» допускает только буквы, цифры, «-» и «_»',
+            'max' => 'Поле «:attribute» должно быть не больше :max символов',
         ],
     ],
 
@@ -181,15 +200,18 @@ return [
         'month'                 => 'Месяц',
         'year'                  => 'Год',
         'hour'                  => 'Час',
-        'minute'                => 'Минута',
-        'second'                => 'Секунда',
-        'title'                 => 'Наименование',
-        'content'               => 'Контент',
-        'description'           => 'Описание',
-        'excerpt'               => 'Выдержка',
-        'date'                  => 'Дата',
-        'time'                  => 'Время',
-        'available'             => 'Доступно',
-        'size'                  => 'Размер',
+        'minute' => 'Минута',
+        'second' => 'Секунда',
+        'title' => 'Наименование',
+        'content' => 'Контент',
+        'description' => 'Описание',
+        'excerpt' => 'Выдержка',
+        'date' => 'Дата',
+        'time' => 'Время',
+        'available' => 'Доступно',
+        'size' => 'Размер',
+        'category_id' => 'Категория',
+        'brand_id' => 'Бренд',
+        'slug' => 'ЧПУ (англ)',
     ],
 ];

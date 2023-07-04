@@ -24,8 +24,34 @@ Route::get('/home', 'UserController@index')->name('home');
 
 
 
-Route::namespace('Admin')->name('admin.')->prefix('admin')->middleware('auth', 'admin')->group(function () {
-    Route::get('index', [\App\Http\Controllers\Admin\AdminController::class, 'index'])->name('index');
+Route::group([
+    'as' => 'admin.', // имя маршрута, например admin.index
+    'prefix' => 'admin', // префикс маршрута, например admin/index
+    'middleware' => ['auth', 'admin'] // один или несколько посредников
+], function () {
+    // главная страница панели управления
+    Route::get('index', \App\Http\Controllers\Admin\IndexController::class)->name('index');
+    // доп.маршрут для просмотра товаров категории
+
+    Route::get('product/category/{category}', 'ProductController@category')
+        ->name('product.category');
+
+    Route::get('/page/{page:slug}', [\App\Http\Controllers\PageController::class, '__invoke'])->name('page.show');
+
+    Route::post('page/upload/image', [\App\Http\Controllers\Admin\PageController::class, 'uploadImage'])
+        ->name('page.upload.image');
+    // удаление изображения в редакторе
+    Route::delete('page/remove/image', [\App\Http\Controllers\Admin\PageController::class, 'removeImage'])
+        ->name('page.remove.image');
+    // CRUD-операции
+    Route::resources([
+        'category' => \App\Http\Controllers\Admin\CategoryController::class,
+        'brand' => \App\Http\Controllers\Admin\BrandController::class,
+        'product' => \App\Http\Controllers\Admin\ProductController::class,
+        'order' => \App\Http\Controllers\Admin\OrderController::class,
+        'user' => \App\Http\Controllers\Admin\UserController::class,
+        'page' => \App\Http\Controllers\Admin\PageController::class,
+    ]);
 });
 
 Route::get('/', 'App\Http\Controllers\IndexController')->name('index');
@@ -56,10 +82,7 @@ Route::post('/basket/remove/{id}', [BasketController::class, 'remove'])
 
 Route::post('/basket/clear', [BasketController::class, 'clear'])->name('basket.clear');
 
-Route::post('/basket/saveorder', [BasketController::class, 'saveorder'])->name('basket.saveorder');
+Route::post('/basket/save-order', [BasketController::class, 'saveOrder'])->name('basket.save-order');
 
 Route::get('/basket/success', [BasketController::class, 'success'])->name('basket.success');
 
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\UserController::class, 'index'])->name('home');

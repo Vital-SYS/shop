@@ -39,7 +39,11 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    protected function authenticated(Request $request, $user) {
+    /**
+     * Сразу после входа выполняем редирект и устанавливаем flash-сообщение
+     */
+    protected function authenticated(Request $request, $user)
+    {
         $route = 'user.index';
         $message = 'Вы успешно вошли в личный кабинет';
         if ($user->admin) {

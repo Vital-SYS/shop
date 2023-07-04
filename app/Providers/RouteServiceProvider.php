@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Page;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -35,6 +36,19 @@ class RouteServiceProvider extends ServiceProvider
 
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
+        });
+
+        /*
+         * Если мы в панели управления — страница будет получена из
+         * БД по id, если в публичной части сайта — то по slug
+         */
+        Route::bind('page', function ($value) {
+            $current = Route::currentRouteName();
+            if ('page.show' == $current) { // публичная часть сайта
+                return Page::whereSlug($value)->firstOrFail();
+            }
+            // панель управления сайта
+            return Page::findOrFail($value);
         });
     }
 }

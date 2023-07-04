@@ -7,31 +7,25 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
+
     use HasFactory;
 
-
-    public function category() {
-        return $this->belongsTo(Category::class);
-    }
+    protected $fillable = [
+        'parent_id',
+        'name',
+        'slug',
+        'content',
+        'image',
+    ];
+    protected $guarded = [];
 
     /**
-     * Связь «товар принадлежит» таблицы `products` с таблицей `brands`
+     * Связь «многие ко многим» таблицы `products` с таблицей `baskets`
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function brand() {
-        return $this->belongsTo(Brand::class);
-    }
-
-    public function baskets() {
+    public function baskets()
+    {
         return $this->belongsToMany(Basket::class)->withPivot('quantity');
-    }
-
-    public function getCategory() {
-        return Category::find($this->category_id);
-    }
-    /**
-     * Возвращает бренд выбранного товара
-     */
-    public function getBrand() {
-        return Brand::find($this->brand_id);
     }
 }
