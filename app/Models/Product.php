@@ -11,11 +11,16 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'parent_id',
+        'category_id',
+        'brand_id',
         'name',
         'slug',
         'content',
         'image',
+        'price',
+        'new',
+        'hit',
+        'sale',
     ];
     protected $guarded = [];
 

@@ -47,7 +47,10 @@ class BasketController extends Controller
 
         $this->basketService->addProductToBasket($basketId, $productId, $quantity);
 
-        return back()->withCookie(cookie('basket_id', $basketId));
+        $basket = Basket::findOrFail($basketId);
+        $positionsCount = $basket->getCount();
+
+        return response()->json(['success' => true, 'positionsCount' => $positionsCount]);
     }
 
     /**

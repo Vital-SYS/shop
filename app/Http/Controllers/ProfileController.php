@@ -23,7 +23,7 @@ class ProfileController extends Controller
      * Сохраняет новый профиль в базу данных
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
     public function store(Request $request)
     {
@@ -57,7 +57,7 @@ class ProfileController extends Controller
      * Показывает информацию о профиле
      *
      * @param \App\Models\Profile $profile
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Http\Response
      */
     public function show(Profile $profile)
     {

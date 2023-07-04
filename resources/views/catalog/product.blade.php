@@ -36,7 +36,7 @@
                                 @csrf
                                 <label for="input-quantity">Количество</label>
                                 <input type="text" name="quantity" id="input-quantity" value="1"
-                                       class="form-control mx-2 w-25 mb-3">
+                                       class="form-control mx-2 w-25">
                                 <button type="submit" class="btn btn-success">
                                     Добавить в корзину
                                 </button>
@@ -73,3 +73,4 @@
         </div>
     </div>
 @endsection
+

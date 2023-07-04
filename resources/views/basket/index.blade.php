@@ -1,11 +1,8 @@
-@extends('layout.site')
+@extends('layout.site', ['title' => 'Ваша корзина'])
 
 @section('content')
     <h1>Ваша корзина</h1>
     @if (count($products))
-        @php
-            $basketCost = 0;
-        @endphp
         <form action="{{ route('basket.clear') }}" method="post" class="text-right">
             @csrf
             <button type="submit" class="btn btn-outline-danger mb-4 mt-0">
@@ -22,38 +19,34 @@
                 <th></th>
             </tr>
             @foreach($products as $product)
-                @php
-                    $itemPrice = $product->price;
-                    $itemQuantity =  $product->pivot->quantity;
-                    $itemCost = $itemPrice * $itemQuantity;
-                    $basketCost = $basketCost + $itemCost;
-                @endphp
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>
-                        <a href="{{ route('catalog.product', [$product->slug]) }}">
+                        <a href="{{ route('catalog.product', ['product' => $product->slug]) }}">
                             {{ $product->name }}
                         </a>
                     </td>
-                    <td>{{ number_format($itemPrice, 2, '.', '') }}</td>
+                    <td>{{ number_format($product->price, 2, '.', '') }}</td>
                     <td>
                         <form action="{{ route('basket.minus', ['id' => $product->id]) }}"
                               method="post" class="d-inline">
                             @csrf
                             <button type="submit" class="m-0 p-0 border-0 bg-transparent">
-                                <i class="fas fa-minus"></i>
+                                <i class="fas fa-minus-square"></i>
                             </button>
                         </form>
-                        <span class="mx-1">{{ $itemQuantity }}</span>
+                        <span class="mx-1">{{ $product->pivot->quantity }}</span>
                         <form action="{{ route('basket.plus', ['id' => $product->id]) }}"
                               method="post" class="d-inline">
                             @csrf
                             <button type="submit" class="m-0 p-0 border-0 bg-transparent">
-                                <i class="fas fa-plus"></i>
+                                <i class="fas fa-plus-square"></i>
                             </button>
                         </form>
                     </td>
-                    <td>{{ number_format($itemCost, 2, '.', '') }}</td>
+                    <td>
+                        {{ number_format($product->price * $product->pivot->quantity, 2, '.', '') }}
+                    </td>
                     <td>
                         <form action="{{ route('basket.remove', ['id' => $product->id]) }}"
                               method="post">
@@ -67,7 +60,7 @@
             @endforeach
             <tr>
                 <th colspan="4" class="text-right">Итого</th>
-                <th>{{ number_format($basketCost, 2, '.', '') }}</th>
+                <th>{{ number_format($amount, 2, '.', '') }}</th>
                 <th></th>
             </tr>
         </table>

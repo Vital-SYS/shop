@@ -36,7 +36,7 @@
             </ul>
 
             <!-- Этот блок расположен посередине -->
-            <form action="/" class="form-inline my-2 my-lg-0">
+            <form action="{{ route('catalog.search') }}" class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="search" name="query"
                        placeholder="Поиск по каталогу" aria-label="Search">
                 <button class="btn btn-outline-light my-2 my-sm-0"

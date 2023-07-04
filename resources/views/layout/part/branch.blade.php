@@ -1,12 +1,12 @@
 <ul>
-    @foreach($items as $item)
+    @foreach ($items->where('parent_id', $parent) as $item)
         <li>
-            <a href="{{ route('catalog.category', ['slug' => $item->slug]) }}">{{ $item->name }}</a>
-            @if ($item->descendants->count())
+            <a href="{{ route('catalog.category', ['category' => $item->slug]) }}">{{ $item->name }}</a>
+            @if (count($items->where('parent_id', $item->id)))
                 <span class="badge badge-dark">
                 <i class="fa fa-plus"></i>
             </span>
-                @include('layout.part.branch', ['items' => $item->descendants])
+                @include('layout.part.branch', ['parent' => $item->id])
             @endif
         </li>
     @endforeach

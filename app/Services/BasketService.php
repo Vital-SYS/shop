@@ -77,5 +77,11 @@ class BasketService
 
         $basket->clear();
     }
+
+    public function getBasketProductsCount($basketId)
+    {
+        $basket = Basket::findOrFail($basketId);
+        return $basket->products()->sum('quantity');
+    }
 }
 

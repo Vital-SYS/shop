@@ -11,7 +11,7 @@
                     <img src="{{ asset('img/404.jpg') }}" alt="" class="img-fluid">
                 </div>
                 <div class="card-footer">
-                    <p>Запрошенная страница не найдена.</p>
+                    <p class="mb-0">Запрошенная страница не найдена.</p>
                 </div>
             </div>
         </div>

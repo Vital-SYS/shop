@@ -64,25 +64,42 @@ jQuery(document).ready(function($) {
      * Добавление товара в корзину с помощью ajax-запроса без перезагрузки
      */
     $('form.add-to-basket').submit(function (e) {
-        // отменяем отправку формы стандартным способом
         e.preventDefault();
-        // получаем данные этой формы добавления в корзину
+
         var $form = $(this);
-        var data = new FormData($form[0]);
+        var formData = new FormData($form[0]);
+
         $.ajax({
             url: $form.attr('action'),
-            data: data,
+            type: 'POST',
+            data: formData,
             processData: false,
             contentType: false,
-            type: 'POST',
-            dataType: 'HTML',
             beforeSend: function () {
-                var spinner = ' <span class="spinner-border spinner-border-sm"></span>';
+                var spinner = '<span class="spinner-border spinner-border-sm"></span>';
                 $form.find('button').append(spinner);
             },
-            success: function (html) {
+            success: function (response) {
                 $form.find('.spinner-border').remove();
-                $('#top-basket').html(html);
+                var $topBasket = $('#top-basket');
+                var $cartCounter = $topBasket.find('.cart-counter');
+
+                if (response.positionsCount > 0) {
+                    if (!$cartCounter.length) {
+                        $cartCounter = $('<span class="cart-counter">');
+                        $topBasket.find('a').append($cartCounter);
+                    }
+
+                    $topBasket.addClass('text-success');
+                    $cartCounter.text('(' + response.positionsCount + ')');
+                } else {
+                    $topBasket.removeClass('text-success');
+                    $cartCounter.remove();
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+                alert('Произошла ошибка при добавлении товара в корзину. Пожалуйста, повторите попытку.');
             }
         });
     });
