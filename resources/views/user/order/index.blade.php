@@ -18,7 +18,7 @@
                     <td>{{ $order->id }}</td>
                     <td>
                         @if($order->created_at)
-                            {{ $order->created_at->format('d.m.Y H:i') }}
+                            {{ \Carbon\Carbon::parse($order->created_at)->format('d.m.Y H:i') }}
                         @else
                             Неизвестно
                         @endif

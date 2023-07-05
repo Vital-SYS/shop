@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
@@ -46,5 +47,27 @@ class Order extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Преобразует дату и время создания заказа из UTC в Europe/Moscow
+     *
+     * @param $value
+     * @return \Carbon\Carbon|false
+     */
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::createFromFormat('Y-m-d H:i:s', $value)->timezone('Europe/Moscow');
+    }
+
+    /**
+     * Преобразует дату и время обновления заказа из UTC в Europe/Moscow
+     *
+     * @param $value
+     * @return \Carbon\Carbon|false
+     */
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::createFromFormat('Y-m-d H:i:s', $value)->timezone('Europe/Moscow');
     }
 }

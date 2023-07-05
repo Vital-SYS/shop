@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Basket;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Services\BasketService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 
 class BasketController extends Controller
@@ -142,7 +144,7 @@ class BasketController extends Controller
      */
     public function saveOrder(Request $request)
     {
-        // проверяем данные формы оформления
+        // Проверяем данные формы оформления
         $this->validate($request, [
             'name' => 'required|max:255',
             'email' => 'required|email|max:255',
@@ -150,24 +152,31 @@ class BasketController extends Controller
             'address' => 'required|max:255',
         ]);
 
-        // валидация пройдена, сохраняем заказ
+        // Валидация пройдена, сохраняем заказ
         $basket = Basket::getBasket();
         $user_id = auth()->check() ? auth()->user()->id : null;
-        $order = Order::create(
-            $request->all() + ['amount' => $basket->getAmount(), 'user_id' => $user_id]
-        );
+        $order = new Order();
+        $order->fill($request->all() + [
+                'amount' => $basket->getAmount(),
+                'user_id' => $user_id,
+            ]);
+
+        // Устанавливаем текущую дату и время для поля created_at
+        $order->created_at = Carbon::now();
+
+        $order->save();
 
         foreach ($basket->products as $product) {
-            $order->items()->create([
-                'product_id' => $product->id,
-                'name' => $product->name,
-                'price' => $product->price,
-                'quantity' => $product->pivot->quantity,
-                'cost' => $product->price * $product->pivot->quantity,
-            ]);
+            $orderItem = new OrderItem();
+            $orderItem->product_id = $product->id;
+            $orderItem->name = $product->name;
+            $orderItem->price = $product->price;
+            $orderItem->quantity = $product->pivot->quantity;
+            $orderItem->cost = $product->price * $product->pivot->quantity;
+            $order->items()->save($orderItem);
         }
 
-        // уничтожаем корзину
+        // Уничтожаем корзину
         $basket->delete();
 
         return redirect()

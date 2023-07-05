@@ -11,7 +11,6 @@ class Basket extends Model
 
     protected $table = 'baskets';
 
-    public $timestamps = false;
 
     /**
      * Связь «многие ко многим» таблицы `baskets` с таблицей `products`
