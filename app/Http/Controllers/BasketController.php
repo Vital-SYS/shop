@@ -27,8 +27,13 @@ class BasketController extends Controller
         $basketId = $request->cookie('basket_id');
 
         if (!empty($basketId)) {
-            $products = $this->basketService->getBasketProducts($basketId);
-            $amount = $this->basket->getAmount();
+            $this->basketService->getBasketProducts($basketId); // Загрузить связанные товары в модель Basket
+
+            $basket = Basket::findOrFail($basketId);
+            $amount = $basket->getAmount();
+
+            $products = $basket->products; // Загруженная коллекция связанных товаров
+
             return view('basket.index', compact('products', 'amount'));
         } else {
             abort(404);

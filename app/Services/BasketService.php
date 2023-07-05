@@ -8,7 +8,8 @@ class BasketService
 {
     public function getBasketProducts($basketId)
     {
-        return Basket::findOrFail($basketId)->products;
+        $basket = Basket::findOrFail($basketId);
+        return $basket->products()->get();
     }
 
     public function createBasket()
