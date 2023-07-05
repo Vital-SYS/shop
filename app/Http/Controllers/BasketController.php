@@ -11,10 +11,12 @@ use Illuminate\Http\Request;
 class BasketController extends Controller
 {
     private $basketService;
+    private $basket;
 
-    public function __construct(BasketService $basketService)
+    public function __construct(BasketService $basketService, Basket $basket)
     {
         $this->basketService = $basketService;
+        $this->basket = $basket;
     }
 
     /**
@@ -26,7 +28,8 @@ class BasketController extends Controller
 
         if (!empty($basketId)) {
             $products = $this->basketService->getBasketProducts($basketId);
-            return view('basket.index', compact('products'));
+            $amount = $this->basket->getAmount();
+            return view('basket.index', compact('products', 'amount'));
         } else {
             abort(404);
         }
@@ -164,7 +167,7 @@ class BasketController extends Controller
 
         return redirect()
             ->route('basket.success')
-            ->with('success', 'Ваш заказ успешно размещен');
+            ->with('order_id', $order->id);
     }
 
     /**

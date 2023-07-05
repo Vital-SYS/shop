@@ -1,4 +1,4 @@
-@extends('layout.site', ['title' => 'Заказ размещен'])
+@extends('layout.site')
 
 @section('content')
     <h1>Заказ размещен</h1>

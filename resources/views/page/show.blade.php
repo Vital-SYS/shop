@@ -9,7 +9,9 @@
             {!! $page->content  !!}
         </div>
         <div class="card-footer">
-            Добавлена: {{ $page->created_at->format('d.m.Y H:i') }}
+            @if($page->created_at)
+                Добавлена: {{ $page->created_at->format('d.m.Y H:i') }}
+            @endif
         </div>
     </div>
 @endsection

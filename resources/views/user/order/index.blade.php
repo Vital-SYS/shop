@@ -16,7 +16,13 @@
             @foreach($orders as $order)
                 <tr>
                     <td>{{ $order->id }}</td>
-                    <td>{{ $order->created_at->format('d.m.Y H:i') }}</td>
+                    <td>
+                        @if($order->created_at)
+                            {{ $order->created_at->format('d.m.Y H:i') }}
+                        @else
+                            Неизвестно
+                        @endif
+                    </td>
                     <td>{{ $statuses[$order->status] }}</td>
                     <td>{{ $order->name }}</td>
                     <td><a href="mailto:{{ $order->email }}">{{ $order->email }}</a></td>

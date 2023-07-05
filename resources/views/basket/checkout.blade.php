@@ -5,7 +5,7 @@
     @if ($profiles && $profiles->count())
         @include('basket.select', ['current' => $profile->id ?? 0])
     @endif
-    <form method="post" action="{{ route('basket.saveorder') }}" id="checkout">
+    <form method="post" action="{{ route('basket.saveOrder') }}" id="checkout">
         @csrf
         <div class="form-group">
             <input type="text" class="form-control" name="name" placeholder="Имя, Фамилия"

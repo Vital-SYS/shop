@@ -4,11 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Stem\LinguaStemRu;
 
 class Product extends Model
 {
 
     use HasFactory;
+
+    protected $table = 'products';
+    public $timestamps = false;
 
     protected $fillable = [
         'category_id',
@@ -22,7 +27,26 @@ class Product extends Model
         'hit',
         'sale',
     ];
-    protected $guarded = [];
+
+    /**
+     * Связь «товар принадлежит» таблицы `products` с таблицей `categories`
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Связь «товар принадлежит» таблицы `products` с таблицей `brands`
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class);
+    }
 
     /**
      * Связь «многие ко многим» таблицы `products` с таблицей `baskets`
@@ -91,15 +115,14 @@ class Product extends Model
                 $words[] = $item;
             }
         }
-        $relevance = "IF (`products`.`name` LIKE '%" . $words[0] . "%', 2, 0)";
-        $relevance .= " + IF (`products`.`content` LIKE '%" . $words[0] . "%', 1, 0)";
-        $relevance .= " + IF (`categories`.`name` LIKE '%" . $words[0] . "%', 1, 0)";
-        $relevance .= " + IF (`brands`.`name` LIKE '%" . $words[0] . "%', 2, 0)";
+        $relevance = "(CASE WHEN products.name LIKE '%" . $words[0] . "%' THEN 2 ELSE 0 END)";
+        $relevance .= " + (CASE WHEN products.content LIKE '%" . $words[0] . "%' THEN 1 ELSE 0 END)";
+        $relevance .= " + (CASE WHEN categories.name LIKE '%" . $words[0] . "%' THEN 1 ELSE 0 END)";
+        $relevance .= " + (CASE WHEN brands.name LIKE '%" . $words[0] . "%' THEN 2 ELSE 0 END)";
         for ($i = 1; $i < count($words); $i++) {
-            $relevance .= " + IF (`products`.`name` LIKE '%" . $words[$i] . "%', 2, 0)";
-            $relevance .= " + IF (`products`.`content` LIKE '%" . $words[$i] . "%', 1, 0)";
-            $relevance .= " + IF (`categories`.`name` LIKE '%" . $words[$i] . "%', 1, 0)";
-            $relevance .= " + IF (`brands`.`name` LIKE '%" . $words[$i] . "%', 2, 0)";
+            $relevance .= " + (CASE WHEN products.name LIKE '%" . $words[$i] . "%' THEN 2 ELSE 0 END)";
+            $relevance .= " + (CASE WHEN products.content LIKE '%" . $words[$i] . "%' THEN 1 ELSE 0 END)";
+            $relevance .= " + (CASE WHEN categories.name LIKE '%" . $words[$i] . "%' THEN 1 ELSE 0 END)";
         }
 
         $query->join('categories', 'categories.id', '=', 'products.category_id')

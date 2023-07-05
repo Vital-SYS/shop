@@ -7,8 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class OrderItem extends Model
 {
-    public $timestamps = false;
     use HasFactory;
+
+    protected $table = 'order_items';
+    public $timestamps = false;
 
     protected $fillable = [
         'product_id',
@@ -19,7 +21,7 @@ class OrderItem extends Model
     ];
 
     /**
-     * Связь «элемент принадлежит» таблицы `order_items` с таблицей `products`
+     * Связь «элемент принадлежит» таблицы `order_item` с таблицей `products`
      */
     public function product()
     {

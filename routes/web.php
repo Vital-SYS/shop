@@ -44,7 +44,7 @@ Route::group([
     Route::get('product/{product:slug}', [\App\Http\Controllers\CatalogController::class, 'product'])
         ->name('product');
     // страница результатов поиска
-    Route::get('search', 'CatalogController@search')
+    Route::get('search', [\App\Http\Controllers\CatalogController::class, 'search'])
         ->name('search');
 });
 
