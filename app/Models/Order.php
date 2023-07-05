@@ -2,14 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 class Order extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'user_id',
         'name',
@@ -28,14 +25,6 @@ class Order extends Model
         3 => 'Доставлен',
         4 => 'Завершен',
     ];
-
-    /**
-     * Связь «один ко многим» таблицы `orders` с таблицей `order_items`
-     */
-    public function items()
-    {
-        return $this->hasMany(OrderItem::class);
-    }
 
     /**
      * Преобразует дату и время создания заказа из UTC в Europe/Moscow
@@ -57,5 +46,25 @@ class Order extends Model
     public function getUpdatedAtAttribute($value)
     {
         return Carbon::createFromFormat('Y-m-d H:i:s', $value)->timezone('Europe/Moscow');
+    }
+
+    /**
+     * Связь «один ко многим» таблицы `orders` с таблицей `order_items`
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    /**
+     * Связь «заказ принадлежит» таблицы `orders` с таблицей `users`
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

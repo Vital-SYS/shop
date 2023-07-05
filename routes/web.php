@@ -111,9 +111,9 @@ Route::group([
     // CRUD-операции над профилями пользователя
     Route::resource('profile', \App\Http\Controllers\ProfileController::class);
     // просмотр списка заказов в личном кабинете
-    Route::get('order', 'OrderController@index')->name('order.index');
+    Route::get('order', [\App\Http\Controllers\OrderController::class, 'index'])->name('order.index');
     // просмотр отдельного заказа в личном кабинете
-    Route::get('order/{order}', 'OrderController@show')->name('order.show');
+    Route::get('order/{order}', [\App\Http\Controllers\OrderController::class, 'show'])->name('order.show');
 });
 
 /*

@@ -59,7 +59,7 @@ class Category extends Model
     /**
      * Возвращает всех потомков категории с идентификатором $id
      */
-    public function getAllChildren($id)
+    public static function getAllChildren($id)
     {
         // получаем прямых потомков категории с идентификатором $id
         $children = self::where('parent_id', $id)->with('children')->get();
@@ -68,7 +68,7 @@ class Category extends Model
             $ids[] = $child->id;
             // для каждого прямого потомка получаем его прямых потомков
             if ($child->children->count()) {
-                $ids = array_merge($ids, $this->getAllChildren($child->id));
+                $ids = array_merge($ids, self::getAllChildren($child->id));
             }
         }
         return $ids;
