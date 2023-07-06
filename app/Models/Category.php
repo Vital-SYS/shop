@@ -10,7 +10,6 @@ class Category extends Model
     use HasFactory;
 
     protected $table = 'categories';
-    public $timestamps = false;
 
     protected $fillable = [
         'parent_id',
@@ -31,7 +30,7 @@ class Category extends Model
     }
 
     /**
-     * Связь «один ко многим» таблицы `categories` с таблицей `categories`
+     * Связь «один ко многим» таблицы categories с таблицей categories
      */
     public function children()
     {
@@ -43,11 +42,11 @@ class Category extends Model
      */
     public static function roots()
     {
-        return self::where('parent_id', 0)->with('children')->get();
+        return self::with('children')->where('parent_id', 0)->get();
     }
 
     /**
-     * Проверяет, что переданный идентификатор id может быть родителем
+     * Проверяет, что переданный идентификатор $id может быть родителем
      * этой категории; что категорию не пытаются поместить внутрь себя
      */
     public function validParent($id)
@@ -62,23 +61,23 @@ class Category extends Model
     /**
      * Возвращает всех потомков категории с идентификатором $id
      */
-    public static function getAllChildren($id)
+    public function getAllChildren($id)
     {
         // получаем прямых потомков категории с идентификатором $id
-        $children = self::where('parent_id', $id)->with('children')->get();
+        $children = self::with('children')->where('parent_id', $id)->get();
         $ids = [];
         foreach ($children as $child) {
             $ids[] = $child->id;
             // для каждого прямого потомка получаем его прямых потомков
             if ($child->children->count()) {
-                $ids = array_merge($ids, self::getAllChildren($child->id));
+                $ids = array_merge($ids, $child->getAllChildren($child->id));
             }
         }
         return $ids;
     }
 
     /**
-     * Связь «один ко многим» таблицы `categories` с таблицей `categories`, но
+     * Связь «один ко многим» таблицы categories с таблицей categories, но
      * позволяет получить не только дочерние категории, но и дочерние-дочерние
      */
     public function descendants()
@@ -91,6 +90,6 @@ class Category extends Model
      */
     public static function hierarchy()
     {
-        return self::where('parent_id', 0)->with('descendants')->get();
+        return self::with('descendants')->where('parent_id', 0)->get();
     }
 }

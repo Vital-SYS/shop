@@ -12,8 +12,8 @@ use Illuminate\Support\Carbon;
 
 class BasketController extends Controller
 {
-    private $basketService;
-    private $basket;
+    protected $basketService;
+    protected $basket;
 
     public function __construct(BasketService $basketService, Basket $basket)
     {
@@ -28,18 +28,22 @@ class BasketController extends Controller
     {
         $basketId = $request->cookie('basket_id');
 
-        if (!empty($basketId)) {
-            $this->basketService->getBasketProducts($basketId); // Загрузить связанные товары в модель Basket
-
-            $basket = Basket::findOrFail($basketId);
-            $amount = $basket->getAmount();
-
-            $products = $basket->products; // Загруженная коллекция связанных товаров
-
-            return view('basket.index', compact('products', 'amount'));
-        } else {
+        if (empty($basketId)) {
             abort(404);
         }
+
+        $this->basketService->getBasketProducts($basketId); // Загрузить связанные товары в модель Basket
+
+        $basket = Basket::find($basketId);
+
+        if (is_null($basket)) {
+            abort(404);
+        }
+
+        $amount = $basket->getAmount();
+        $products = $basket->products; // Загруженная коллекция связанных товаров
+
+        return view('basket.index', compact('products', 'amount'));
     }
 
     /**
@@ -57,7 +61,12 @@ class BasketController extends Controller
 
         $this->basketService->addProductToBasket($basketId, $productId, $quantity);
 
-        $basket = Basket::findOrFail($basketId);
+        $basket = Basket::find($basketId);
+
+        if (is_null($basket)) {
+            abort(404);
+        }
+
         $positionsCount = $basket->getCount();
 
         return response()->json(['success' => true, 'positionsCount' => $positionsCount]);
@@ -76,9 +85,7 @@ class BasketController extends Controller
 
         $this->basketService->changeProductQuantity($basketId, $productId, 1);
 
-        return redirect()
-            ->route('basket.index')
-            ->withCookie(cookie('basket_id', $basketId, 525600));
+        return back();
     }
 
     /**
@@ -94,9 +101,7 @@ class BasketController extends Controller
 
         $this->basketService->changeProductQuantity($basketId, $productId, -1);
 
-        return redirect()
-            ->route('basket.index')
-            ->withCookie(cookie('basket_id', $basketId, 525600));
+        return back();
     }
 
     /**
@@ -116,7 +121,7 @@ class BasketController extends Controller
             abort(404);
         }
 
-        return redirect()->route('basket.index');
+        return back();
     }
 
     /**
@@ -136,8 +141,9 @@ class BasketController extends Controller
             abort(404);
         }
 
-        return redirect()->route('basket.index');
+        return back();
     }
+
 
     /**
      * Сохранение заказа в БД

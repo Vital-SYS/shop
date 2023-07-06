@@ -2,6 +2,24 @@
     <div class="card list-item">
         <div class="card-header">
             <h3 class="mb-0">{{ $product->name }}</h3>
+            <hr class="m-1">
+            <div class="mb-0">
+                @isset($product->category)
+                    Категория:
+                    <a href="{{ route('catalog.category', ['category' => $product->category->slug]) }}">
+                        {{ $product->category->name }}
+                    </a>
+                @endisset
+            </div>
+            <div class="mb-0">
+                @isset($product->brand)
+                    Бренд:
+                    <a href="{{ route('catalog.brand', ['brand' => $product->brand->slug]) }}">
+                        {{ $product->brand->name }}
+                    </a>
+                @endisset
+            </div>
+
         </div>
         <div class="card-body p-0 position-relative">
             <div class="position-absolute">
@@ -31,24 +49,7 @@
             </form>
             <a href="{{ route('catalog.product', ['product' => $product->slug]) }}"
                class="btn btn-dark float-right">Смотреть</a>
-            <div class="row p-3">
-                <div class="row-cols-md-6">
-                    @isset($product->category)
-                        Категория:
-                        <a href="{{ route('catalog.category', ['category' => $product->category->slug]) }}">
-                            {{ $product->category->name }}
-                        </a>
-                    @endisset
-                </div>
-                <div class="row-cols-md-6 text-right">
-                    @isset($product->brand)
-                        Бренд:
-                        <a href="{{ route('catalog.brand', ['brand' => $product->brand->slug]) }}">
-                            {{ $product->brand->name }}
-                        </a>
-                    @endisset
-                </div>
-            </div>
+
         </div>
     </div>
 </div>

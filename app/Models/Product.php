@@ -13,7 +13,6 @@ class Product extends Model
     use HasFactory;
 
     protected $table = 'products';
-    public $timestamps = false;
 
     protected $fillable = [
         'category_id',
@@ -67,7 +66,8 @@ class Product extends Model
      */
     public function scopeCategoryProducts($builder, $id)
     {
-        $descendants = Category::getAllChildren($id);
+        $category = new Category();
+        $descendants = $category->getAllChildren($id);
         $descendants[] = $id;
         return $builder->whereIn('category_id', $descendants);
     }
