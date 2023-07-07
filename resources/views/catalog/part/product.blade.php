@@ -1,25 +1,8 @@
 <div class="col-md-4 mb-4">
     <div class="card list-item">
         <div class="card-header">
-            <h3 class="mb-0">{{ $product->name }}</h3>
+            <h3 class="mb-0 text-center">{{ $product->name }}</h3>
             <hr class="m-1">
-            <div class="mb-0">
-                @isset($product->category)
-                    Категория:
-                    <a href="{{ route('catalog.category', ['category' => $product->category->slug]) }}">
-                        {{ $product->category->name }}
-                    </a>
-                @endisset
-            </div>
-            <div class="mb-0">
-                @isset($product->brand)
-                    Бренд:
-                    <a href="{{ route('catalog.brand', ['brand' => $product->brand->slug]) }}">
-                        {{ $product->brand->name }}
-                    </a>
-                @endisset
-            </div>
-
         </div>
         <div class="card-body p-0 position-relative">
             <div class="position-absolute">

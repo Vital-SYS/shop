@@ -8,7 +8,7 @@ use App\Models\OrderItem;
 use App\Services\BasketService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-
+use Illuminate\Support\Facades\Cookie;
 
 class BasketController extends Controller
 {
@@ -26,7 +26,7 @@ class BasketController extends Controller
      */
     public function index(Request $request)
     {
-        $basketId = $request->cookie('basket_id');
+        $basketId = (string)$request->cookie('basket_id');
 
         if (empty($basketId)) {
             abort(404);
