@@ -6,9 +6,9 @@ use App\Models\Basket;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Services\BasketService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Cookie;
 
 class BasketController extends Controller
 {
@@ -21,9 +21,6 @@ class BasketController extends Controller
         $this->basket = $basket;
     }
 
-    /**
-     * Отображение элементов
-     */
     public function index(Request $request)
     {
         $basketId = (string)$request->cookie('basket_id');
@@ -46,9 +43,7 @@ class BasketController extends Controller
         return view('basket.index', compact('products', 'amount'));
     }
 
-    /**
-     * Добавление элементов в корзину
-     */
+
     public function add(Request $request, $productId)
     {
         $basketId = $request->cookie('basket_id');
@@ -72,9 +67,7 @@ class BasketController extends Controller
         return response()->json(['success' => true, 'positionsCount' => $positionsCount]);
     }
 
-    /**
-     * Прибавление кол-ва товаров в позиции
-     */
+
     public function plus(Request $request, $productId)
     {
         $basketId = $request->cookie('basket_id');
@@ -88,9 +81,7 @@ class BasketController extends Controller
         return back();
     }
 
-    /**
-     * Убавление кол-ва товаров в позиции
-     */
+
     public function minus(Request $request, $productId)
     {
         $basketId = $request->cookie('basket_id');
@@ -104,9 +95,7 @@ class BasketController extends Controller
         return back();
     }
 
-    /**
-     * Удаление элемента в корзине
-     */
+
     public function remove(Request $request, $productId)
     {
         $basketId = $request->cookie('basket_id');
@@ -117,16 +106,13 @@ class BasketController extends Controller
 
         try {
             $this->basketService->removeProductFromBasket($basketId, $productId);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             abort(404);
         }
 
         return back();
     }
 
-    /**
-     * Очистка корзины
-     */
     public function clear(Request $request)
     {
         $basketId = $request->cookie('basket_id');
@@ -137,7 +123,7 @@ class BasketController extends Controller
 
         try {
             $this->basketService->clearBasket($basketId);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             abort(404);
         }
 
@@ -145,9 +131,6 @@ class BasketController extends Controller
     }
 
 
-    /**
-     * Сохранение заказа в БД
-     */
     public function saveOrder(Request $request)
     {
         // Проверяем данные формы оформления
@@ -190,10 +173,8 @@ class BasketController extends Controller
             ->with('order_id', $order->id);
     }
 
-    /**
-     * Сообщение об успешном оформлении заказа
-     */
-    public function success(Request $request) {
+    public function success(Request $request)
+    {
         if ($request->session()->exists('order_id')) {
             // сюда покупатель попадает сразу после успешного оформления заказа
             $order_id = $request->session()->pull('order_id');
@@ -206,12 +187,7 @@ class BasketController extends Controller
         }
     }
 
-    /**
-     * Форма оформления заказа
-     *
-     * @param Request $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Http\Response
-     */
+
     public function checkout(Request $request)
     {
         $profile = null;
@@ -229,12 +205,6 @@ class BasketController extends Controller
         return view('basket.checkout', compact('profiles', 'profile'));
     }
 
-    /**
-     * Возвращает профиль пользователя в формате JSON
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
-     */
     public function profile(Request $request)
     {
         if (!$request->ajax()) {

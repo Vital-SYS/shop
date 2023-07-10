@@ -24,11 +24,12 @@
             @endif
         </div>
         <div class="card-footer">
+
             <!-- Форма для добавления товара в корзину -->
             <form action="{{ route('basket.add', ['id' => $product->id]) }}"
                   method="post" class="d-inline add-to-basket">
                 @csrf
-                <button type="submit" class="btn btn-success">В корзину</button>
+                <button type="submit" class="btn btn-success">{{ $product->price }} руб.</button>
             </form>
             <a href="{{ route('catalog.product', ['product' => $product->slug]) }}"
                class="btn btn-dark float-right">Смотреть</a>

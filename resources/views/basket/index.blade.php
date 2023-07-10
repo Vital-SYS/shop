@@ -32,7 +32,7 @@
                               method="post" class="d-inline">
                             @csrf
                             <button type="submit" class="m-0 p-0 border-0 bg-transparent">
-                                <i class="fas fa-minus-square"></i>
+                                <i class="fas fa-minus"></i>
                             </button>
                         </form>
                         <span class="mx-1">{{ $product->pivot->quantity }}</span>
@@ -40,7 +40,7 @@
                               method="post" class="d-inline">
                             @csrf
                             <button type="submit" class="m-0 p-0 border-0 bg-transparent">
-                                <i class="fas fa-plus-square"></i>
+                                <i class="fas fa-plus"></i>
                             </button>
                         </form>
                     </td>
