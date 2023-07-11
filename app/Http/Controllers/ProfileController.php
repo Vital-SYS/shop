@@ -2,122 +2,62 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProfileRequest;
 use App\Models\Profile;
-use Illuminate\Http\Request;
+use App\Services\ProfileService;
 
 class ProfileController extends Controller
 {
+    private $profileService;
 
-    /**
-     * Показывает список всех профилей
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function __construct(ProfileService $profileService)
+    {
+        $this->profileService = $profileService;
+    }
+
     public function index()
     {
-        $profiles = auth()->user()->profiles()->paginate(4);
+        $profiles = $this->profileService->getUserProfiles();
         return view('user.profile.index', compact('profiles'));
     }
 
-    /**
-     * Сохраняет новый профиль в базу данных
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function store(ProfileRequest $request)
     {
-        // проверяем данные формы профиля
-        $this->validate($request, [
-            'user_id' => 'in:' . auth()->user()->id,
-            'title' => 'required|max:255',
-            'name' => 'required|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'required|max:255',
-            'address' => 'required|max:255',
-        ]);
-        // валидация пройдена, создаем профиль
-        $profile = Profile::create($request->all());
+        $this->profileService->createProfile($request->all());
         return redirect()
-            ->route('user.profile.show', ['profile' => $profile->id])
+            ->route('user.profile.index')
             ->with('success', 'Новый профиль успешно создан');
     }
 
-    /**
-     * Показывает форму для создания профиля
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         return view('user.profile.create');
     }
 
-    /**
-     * Показывает информацию о профиле
-     *
-     * @param \App\Models\Profile $profile
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Http\Response
-     */
     public function show(Profile $profile)
     {
-        if ($profile->user_id !== auth()->user()->id) {
-            abort(404); // это чужой профиль
-        }
+        $this->profileService->validateUserProfile($profile);
         return view('user.profile.show', compact('profile'));
     }
 
-    /**
-     * Показывает форму для редактирования профиля
-     *
-     * @param \App\Models\Profile $profile
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Http\Response
-     */
     public function edit(Profile $profile)
     {
-        if ($profile->user_id !== auth()->user()->id) {
-            abort(404); // это чужой профиль
-        }
+        $this->profileService->validateUserProfile($profile);
         return view('user.profile.edit', compact('profile'));
     }
 
-    /**
-     * Обновляет профиль (запись в таблице БД)
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Profile $profile
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
-     */
-    public function update(Request $request, Profile $profile)
+    public function update(ProfileRequest $request, Profile $profile)
     {
-        // проверяем данные формы профиля
-        $this->validate($request, [
-            'user_id' => 'in:' . auth()->user()->id,
-            'title' => 'required|max:255',
-            'name' => 'required|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'required|max:255',
-            'address' => 'required|max:255',
-        ]);
-        // валидация пройдена, обновляем профиль
-        $profile->update($request->all());
+        $this->profileService->updateProfile($request->all(), $profile);
         return redirect()
             ->route('user.profile.show', ['profile' => $profile->id])
             ->with('success', 'Профиль был успешно отредактирован');
     }
 
-    /**
-     * Удаляет профиль (запись в таблице БД)
-     *
-     * @param \App\Models\Profile $profile
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
-     */
     public function destroy(Profile $profile)
     {
-        if ($profile->user_id !== auth()->user()->id) {
-            abort(404); // это чужой профиль
-        }
-        $profile->delete();
+        $this->profileService->validateUserProfile($profile);
+        $this->profileService->deleteProfile($profile);
         return redirect()
             ->route('user.profile.index')
             ->with('success', 'Профиль был успешно удален');
