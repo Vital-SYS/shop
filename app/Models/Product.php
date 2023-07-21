@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
+use App\Helpers\ProductFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
 use Stem\LinguaStemRu;
 
@@ -30,7 +34,7 @@ class Product extends Model
     /**
      * Связь «товар принадлежит» таблицы `products` с таблицей `categories`
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function category()
     {
@@ -40,7 +44,7 @@ class Product extends Model
     /**
      * Связь «товар принадлежит» таблицы `products` с таблицей `brands`
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function brand()
     {
@@ -50,7 +54,7 @@ class Product extends Model
     /**
      * Связь «многие ко многим» таблицы `products` с таблицей `baskets`
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function baskets()
     {
@@ -60,9 +64,9 @@ class Product extends Model
     /**
      * Позволяет выбирать товары категории и всех ее потомков
      *
-     * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @param Builder $builder
      * @param integer $id
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function scopeCategoryProducts($builder, $id)
     {
@@ -75,9 +79,9 @@ class Product extends Model
     /**
      * Позволяет фильтровать товары по нескольким условиям
      *
-     * @param \Illuminate\Database\Eloquent\Builder $builder
-     * @param \App\Helpers\ProductFilter $filters
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param Builder $builder
+     * @param ProductFilter $filters
+     * @return Builder
      */
     public function scopeFilterProducts($builder, $filters)
     {
@@ -87,9 +91,9 @@ class Product extends Model
     /**
      * Позволяет искать товары по заданным словам
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param Builder $query
      * @param string $search
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function scopeSearch($query, $search)
     {

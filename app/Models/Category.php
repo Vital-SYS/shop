@@ -19,6 +19,22 @@ class Category extends Model
         'image',
     ];
 
+    /**
+     * Возвращает список корневых категорий каталога товаров
+     */
+    public static function roots()
+    {
+        return self::with('children')->where('parent_id', 0)->get();
+    }
+
+    /**
+     * Возвращает список всех категорий каталога в виде дерева
+     */
+    public static function hierarchy()
+    {
+        return self::with('descendants')->where('parent_id', 0)->get();
+    }
+
     public function products()
     {
         return $this->hasMany(Product::class, 'category_id');
@@ -35,14 +51,6 @@ class Category extends Model
     public function children()
     {
         return $this->hasMany(Category::class, 'parent_id');
-    }
-
-    /**
-     * Возвращает список корневых категорий каталога товаров
-     */
-    public static function roots()
-    {
-        return self::with('children')->where('parent_id', 0)->get();
     }
 
     /**
@@ -83,13 +91,5 @@ class Category extends Model
     public function descendants()
     {
         return $this->hasMany(Category::class, 'parent_id')->with('descendants');
-    }
-
-    /**
-     * Возвращает список всех категорий каталога в виде дерева
-     */
-    public static function hierarchy()
-    {
-        return self::with('descendants')->where('parent_id', 0)->get();
     }
 }

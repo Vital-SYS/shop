@@ -15,7 +15,7 @@
                class="btn btn-success">
                 Редактировать страницу
             </a>
-            <form method="post" class="d-inline" onsubmit="return confirm('Удалить эту страницу?')"
+            <form method="post" class="d-inline"  onsubmit="return confirm('Удалить эту страницу?')"
                   action="{{ route('admin.page.destroy', ['page' => $page->id]) }}">
                 @csrf
                 @method('DELETE')

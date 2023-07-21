@@ -18,6 +18,14 @@ class Brand extends Model
         'image',
     ];
 
+    /**
+     * Возвращает список популярных брендов каталога товаров.
+     */
+    public static function popular()
+    {
+        return self::withCount('products')->orderByDesc('products_count')->limit(5)->get();
+    }
+
     public function products()
     {
         return $this->hasMany(Product::class);
@@ -26,13 +34,5 @@ class Brand extends Model
     public function getProducts()
     {
         return Product::where('brand_id', $this->id)->get();
-    }
-
-    /**
-     * Возвращает список популярных брендов каталога товаров.
-     */
-    public static function popular()
-    {
-        return self::withCount('products')->orderByDesc('products_count')->limit(5)->get();
     }
 }

@@ -9,11 +9,12 @@ use App\Services\BasketService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\ValidationException;
 
 class BasketController extends Controller
 {
-    protected $basketService;
-    protected $basket;
+    protected BasketService $basketService;
+    protected Basket $basket;
 
     public function __construct(BasketService $basketService, Basket $basket)
     {
@@ -134,12 +135,15 @@ class BasketController extends Controller
     public function saveOrder(Request $request)
     {
         // Проверяем данные формы оформления
-        $this->validate($request, [
-            'name' => 'required|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'required|max:255',
-            'address' => 'required|max:255',
-        ]);
+        try {
+            $this->validate($request, [
+                'name' => 'required|max:255',
+                'email' => 'required|email|max:255',
+                'phone' => 'required|max:255',
+                'address' => 'required|max:255',
+            ]);
+        } catch (ValidationException $e) {
+        }
 
         // Валидация пройдена, сохраняем заказ
         $basket = Basket::getBasket();
@@ -195,7 +199,9 @@ class BasketController extends Controller
         if (auth()->check()) { // если пользователь аутентифицирован
             $user = auth()->user();
             // ...и у него есть профили для оформления
-            $profiles = $user->profiles;
+            if (!empty($user->profiles)) {
+                $profiles = $user->profiles;
+            }
             // ...и был запрошен профиль для оформления
             $prof_id = (int)$request->input('profile_id');
             if ($prof_id) {
