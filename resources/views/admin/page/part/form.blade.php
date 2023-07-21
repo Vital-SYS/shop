@@ -21,7 +21,7 @@
     </select>
 </div>
 <div class="form-group">
-    <textarea class="form-control" name="content" placeholder="Контент (html)" 
+    <textarea class="form-control" name="content" placeholder="Контент (html)"
               id="editor" rows="10">{{ old('content') ?? $page->content ?? '' }}</textarea>
 </div>
 <div class="form-group">

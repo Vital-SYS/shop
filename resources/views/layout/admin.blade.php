@@ -10,7 +10,6 @@
 
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css"/>
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}"/>
 </head>
 <body>
@@ -90,8 +89,6 @@
     </div>
 </div>
 <script src="{{ asset('js/app.js') }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/lang/summernote-ru-RU.min.js"></script>
 <script src="{{ asset('js/admin.js') }}"></script>
 </body>
 </html>
