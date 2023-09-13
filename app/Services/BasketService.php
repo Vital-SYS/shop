@@ -8,7 +8,12 @@ class BasketService
 {
     public function getBasketProducts($basketId)
     {
-        $basket = Basket::findOrFail($basketId);
+        $basket = Basket::find($basketId);
+
+        if (!$basket) {
+            abort(404);
+        }
+
         return $basket->products()->get();
     }
 
@@ -64,8 +69,6 @@ class BasketService
 
     public function clearBasket($basketId)
     {
-
-
         if (empty($basketId)) {
             abort(404);
         }
@@ -81,7 +84,12 @@ class BasketService
 
     public function getBasketProductsCount($basketId)
     {
-        $basket = Basket::findOrFail($basketId);
+        $basket = Basket::find($basketId);
+
+        if (!$basket) {
+            abort(404);
+        }
+
         return $basket->products()->sum('quantity');
     }
 }

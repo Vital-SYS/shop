@@ -118,16 +118,16 @@ class Basket extends Model
     public static function getBasket()
     {
         $basket_id = (int)request()->cookie('basket_id');
+
         if (!empty($basket_id)) {
-            try {
-                $basket = Basket::findOrFail($basket_id);
-            } catch (ModelNotFoundException $e) {
-                $basket = Basket::create();
-            }
-        } else {
-            $basket = Basket::create();
+            $basket = Basket::find($basket_id);
         }
-        Cookie::queue('basket_id', $basket->id, 525600);
+
+        if (empty($basket)) {
+            $basket = Basket::create();
+            Cookie::queue('basket_id', $basket->id, 525600);
+        }
+
         return $basket;
     }
 }

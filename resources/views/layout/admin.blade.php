@@ -27,6 +27,9 @@
             <!-- Этот блок расположен слева -->
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
+                    <a class="nav-link" href="{{ route('index') }}">Магазин</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{{ route('admin.order.index') }}">Заказы</a>
                 </li>
                 <li class="nav-item">

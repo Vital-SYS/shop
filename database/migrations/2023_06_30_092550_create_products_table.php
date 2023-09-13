@@ -18,8 +18,7 @@ return new class extends Migration
             $table->string('name', 100);
             $table->text('content')->nullable();
             $table->string('slug', 100)->unique();
-            $table->string('image_main', 50)->nullable();
-            $table->string('image_prev', 50)->nullable();
+            $table->string('image', 50)->nullable();
             $table->decimal('price', 10, 2, true)->default(0);
             $table->timestamps();
 

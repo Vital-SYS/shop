@@ -16,10 +16,9 @@
         <div class="col-md-6">
             @php
                 if ($category->image) {
-                    // $url = url('storage/catalog/category/image/' . $category->image);
-                    $url = Storage::disk('public')->url('catalog/category/image/' . $category->image);
+                    $url = url('storage/catalog/category/image/' . $category->image);
                 } else {
-                    $url = Storage::disk('public')->url('catalog/category/image/default.jpg');
+                    $url = url('storage/catalog/category/image/default.jpg');
                 }
             @endphp
             <img src="{{ $url }}" alt="" class="img-fluid">
