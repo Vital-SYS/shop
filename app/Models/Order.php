@@ -30,43 +30,21 @@ class Order extends Model
         4 => 'Завершен',
     ];
 
-    /**
-     * Связь «один ко многим» таблицы `orders` с таблицей `order_items`
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
     public function items()
     {
         return $this->hasMany(OrderItem::class);
     }
 
-    /**
-     * Связь «заказ принадлежит» таблицы `orders` с таблицей `users`
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Преобразует дату и время создания заказа из UTC в Europe/Moscow
-     *
-     * @param $value
-     * @return \Carbon\Carbon|false
-     */
     public function getCreatedAtAttribute($value)
     {
         return Carbon::createFromFormat('Y-m-d H:i:s', $value)->timezone('Europe/Moscow');
     }
 
-    /**
-     * Преобразует дату и время обновления заказа из UTC в Europe/Moscow
-     *
-     * @param $value
-     * @return \Carbon\Carbon|false
-     */
     public function getUpdatedAtAttribute($value)
     {
         return Carbon::createFromFormat('Y-m-d H:i:s', $value)->timezone('Europe/Moscow');

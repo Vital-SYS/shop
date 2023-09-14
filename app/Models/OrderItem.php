@@ -19,9 +19,6 @@ class OrderItem extends Model
         'cost',
     ];
 
-    /**
-     * Связь «элемент принадлежит» таблицы `order_item` с таблицей `products`
-     */
     public function product()
     {
         return $this->belongsTo(Product::class);

@@ -30,7 +30,7 @@ class BasketController extends Controller
             abort(404);
         }
 
-        $this->basketService->getBasketProducts($basketId); // Загрузить связанные товары в модель Basket
+        $this->basketService->getBasketProducts($basketId);
 
         $basket = Basket::find($basketId);
 
@@ -39,7 +39,7 @@ class BasketController extends Controller
         }
 
         $amount = $basket->getAmount();
-        $products = $basket->products; // Загруженная коллекция связанных товаров
+        $products = $basket->products;
 
         return view('basket.index', compact('products', 'amount'));
     }
@@ -154,7 +154,6 @@ class BasketController extends Controller
                 'user_id' => $user_id,
             ]);
 
-        // Устанавливаем текущую дату и время для поля created_at
         $order->created_at = Carbon::now();
 
         $order->save();
@@ -180,13 +179,10 @@ class BasketController extends Controller
     public function success(Request $request)
     {
         if ($request->session()->exists('order_id')) {
-            // сюда покупатель попадает сразу после успешного оформления заказа
             $order_id = $request->session()->pull('order_id');
             $order = Order::findOrFail($order_id);
             return view('basket.success', compact('order'));
         } else {
-            // если покупатель попал сюда случайно, не после оформления заказа,
-            // ему здесь делать нечего — отправляем на страницу корзины
             return redirect()->route('basket.index');
         }
     }
@@ -196,13 +192,12 @@ class BasketController extends Controller
     {
         $profile = null;
         $profiles = null;
-        if (auth()->check()) { // если пользователь аутентифицирован
+        if (auth()->check()) {
             $user = auth()->user();
-            // ...и у него есть профили для оформления
+
             if (!empty($user->profiles)) {
                 $profiles = $user->profiles;
             }
-            // ...и был запрошен профиль для оформления
             $prof_id = (int)$request->input('profile_id');
             if ($prof_id) {
                 $profile = $user->profiles()->whereIdAndUserId($prof_id, $user->id)->first();

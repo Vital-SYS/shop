@@ -18,23 +18,12 @@ class CategoryController extends Controller
         $this->imageSaver = $imageSaver;
     }
 
-    /**
-     * Показывает список всех категорий
-     *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Http\Response
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     */
     public function index()
     {
         $items = Category::all();
         return view('admin.category.index', compact('items'));
     }
 
-    /**
-     * Показывает форму для создания категории
-     *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Http\Response
-     */
     public function create()
     {
         // все категории для возможности выбора родителя
@@ -42,12 +31,6 @@ class CategoryController extends Controller
         return view('admin.category.create', compact('items'));
     }
 
-    /**
-     * Сохраняет новую категорию в базу данных
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
-     */
     public function store(CategoryCatalogRequest $request)
     {
         $data = $request->all();
@@ -58,23 +41,11 @@ class CategoryController extends Controller
             ->with('success', 'Новая категория успешно создана');
     }
 
-    /**
-     * Показывает страницу категории
-     *
-     * @param \App\Models\Category $category
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Http\Response
-     */
     public function show(Category $category)
     {
         return view('admin.category.show', compact('category'));
     }
 
-    /**
-     * Показывает форму для редактирования категории
-     *
-     * @param \App\Models\Category $category
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Http\Response
-     */
     public function edit(Category $category)
     {
         // все категории для возможности выбора родителя
@@ -82,13 +53,6 @@ class CategoryController extends Controller
         return view('admin.category.edit', compact('category', 'items'));
     }
 
-    /**
-     * Обновляет категорию каталога
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Category $category
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
-     */
     public function update(CategoryCatalogRequest $request, Category $category)
     {
         $data = $request->all();
@@ -99,12 +63,6 @@ class CategoryController extends Controller
             ->with('success', 'Категория была успешно исправлена');
     }
 
-    /**
-     * Удаляет категорию каталога
-     *
-     * @param \App\Models\Category $category
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
-     */
     public function destroy(Category $category)
     {
         if ($category->children->count()) {

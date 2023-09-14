@@ -11,36 +11,21 @@ class Basket extends Model
 
     protected $table = 'baskets';
 
-
-    /**
-     * Связь «многие ко многим» таблицы `baskets` с таблицей `products`
-     */
     public function products()
     {
         return $this->belongsToMany(Product::class)->withPivot('quantity');
     }
 
-    /**
-     * Увеличивает кол-во товара $id в корзине на величину $count
-     */
     public function increase($id, $count = 1)
     {
         $this->change($id, $count);
     }
 
-    /**
-     * Уменьшает кол-во товара $id в корзине на величину $count
-     */
     public function decrease($id, $count = 1)
     {
         $this->change($id, -1 * $count);
     }
 
-    /**
-     * Изменяет количество товара $id в корзине на величину $count;
-     * если товара еще нет в корзине — добавляет этот товар; $count
-     * может быть как положительным, так и отрицательным числом
-     */
     private function change($id, $count = 1)
     {
         if ($count == 0) {
@@ -66,9 +51,6 @@ class Basket extends Model
         $this->touch();
     }
 
-    /**
-     * Удаляет товар с идентификатором $id из корзины покупателя
-     */
     public function remove($id)
     {
         // удаляем товар из корзины (разрушаем связь)
@@ -77,9 +59,6 @@ class Basket extends Model
         $this->touch();
     }
 
-    /**
-     * Удаляет все товары из корзины покупателя
-     */
     public function clear()
     {
         // удаляем товар из корзины (разрушаем все связи)
@@ -88,9 +67,6 @@ class Basket extends Model
         $this->touch();
     }
 
-    /**
-     * Возвращает стоимость всех товаров в корзине
-     */
     public function getAmount()
     {
         $amount = 0.0;
@@ -100,9 +76,6 @@ class Basket extends Model
         return $amount;
     }
 
-    /**
-     * Возвращает количество позиций в корзине
-     */
     public static function getCount()
     {
         $basket_id = request()->cookie('basket_id');
@@ -112,9 +85,6 @@ class Basket extends Model
         return self::getBasket()->products->count();
     }
 
-    /**
-     * Возвращает объект корзины; если не найден — создает новый
-     */
     public static function getBasket()
     {
         $basket_id = (int)request()->cookie('basket_id');

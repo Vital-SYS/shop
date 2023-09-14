@@ -15,32 +15,17 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
@@ -58,33 +43,16 @@ class User extends Authenticatable
         $this->notify($notification);
     }
 
-    /**
-     * Преобразует дату и время регистрации пользователя из UTC в Europe/Moscow
-     *
-     * @param $value
-     * @return \Carbon\Carbon|false
-     */
     public function getCreatedAtAttribute($value)
     {
         return Carbon::createFromFormat('Y-m-d H:i:s', $value)->timezone('Europe/Moscow');
     }
 
-    /**
-     * Преобразует дату и время обновления пользователя из UTC в Europe/Moscow
-     *
-     * @param $value
-     * @return \Carbon\Carbon|false
-     */
     public function getUpdatedAtAttribute($value)
     {
         return Carbon::createFromFormat('Y-m-d H:i:s', $value)->timezone('Europe/Moscow');
     }
 
-    /**
-     * Связь «один ко многим» таблицы `users` с таблицей `profiles`
-     *
-     * @return HasMany
-     */
     public function profiles()
     {
         return $this->hasMany(Profile::class);

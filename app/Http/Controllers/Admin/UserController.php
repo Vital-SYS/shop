@@ -10,37 +10,17 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-
-    /**
-     * Показывает список всех пользователей
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $users = User::paginate(5);
         return view('admin.user.index', compact('users'));
     }
 
-    /**
-     * Показывает форму для редактирования пользователя
-     *
-     * @param \App\Models\User $user
-     * @return \Illuminate\Http\Response
-     */
     public function edit(User $user)
     {
         return view('admin.user.edit', compact('user'));
     }
 
-    /**
-     * Обновляет данные пользователя в базе данных
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\User $user
-     * @return \Illuminate\Http\RedirectResponse
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function update(Request $request, User $user)
     {
         /*
@@ -64,12 +44,6 @@ class UserController extends Controller
             ->with('success', 'Данные пользователя успешно обновлены');
     }
 
-    /**
-     * Возвращает объект валидатора с нужными нам правилами
-     *
-     * @param array $data
-     * @return \Illuminate\Contracts\Validation\Validator|\Illuminate\Validation\Validator
-     */
     private function validator(array $data, int $id)
     {
         $rules = [

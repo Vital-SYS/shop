@@ -19,7 +19,6 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         if (auth()->user()->id !== $order->user_id) {
-            // можно просматривать только свои заказы
             abort(404);
         }
         $statuses = Order::STATUSES;

@@ -12,17 +12,16 @@ class CatalogController extends Controller
 {
     public function index()
     {
-        // корневые категории
         $roots = Category::where('parent_id', 0)->get();
-        // популярные бренды
         $brands = Brand::popular();
+
         return view('catalog.index', compact('roots', 'brands'));
     }
 
     public function category(Category $category, ProductFilter $filters)
     {
-        $products = Product::categoryProducts($category->id) // товары категории и всех ее потомков
-        ->filterProducts($filters) // фильтруем товары категории и всех ее потомков
+        $products = Product::categoryProducts($category->id)
+        ->filterProducts($filters)
         ->paginate(9)
             ->withQueryString();
         return view('catalog.category', compact('category', 'products'));
@@ -31,7 +30,7 @@ class CatalogController extends Controller
     public function brand(Brand $brand, ProductFilter $filters)
     {
         $products = $brand
-            ->products() // возвращает построитель запроса
+            ->products()
             ->filterProducts($filters)
             ->paginate(9)
             ->withQueryString();

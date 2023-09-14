@@ -36,18 +36,10 @@ class Item extends Model
 
     public function getCreatedAtAttribute($value)
     {
-        /*
-         * Если формат даты d.m.Y H:i:s, значит вызван метод модели
-         * toArray() или toJson() — и мы возвращаем дату-время в UTC
-         */
         if (preg_match('~^\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}:\d{2}$~', $value)) {
             return Carbon::createFromFormat('d.m.Y H:i:s', $value)
                 ->format('d.m.Y H:i:sP');
         }
-        /*
-         * Если формат даты Y-m-d H:i:s — преобразуем дату-время из
-         * UTC в часовой пояс этого пользователя
-         */
         return Carbon::createFromFormat('Y-m-d H:i:s', $value)
             ->timezone($this->timezone)
             ->format('d.m.Y H:i');
@@ -55,18 +47,11 @@ class Item extends Model
 
     public function getUpdatedAtAttribute($value)
     {
-        /*
-         * Если формат даты d.m.Y H:i:s, значит вызван метод модели
-         * toArray() или toJson() — возвращаем дату-время в UTC
-         */
         if (preg_match('~^\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}:\d{2}$~', $value)) {
             return Carbon::createFromFormat('d.m.Y H:i:s', $value)
                 ->format('d.m.Y H:i:sP');
         }
-        /*
-         * Если формат даты Y-m-d H:i:s — преобразуем дату-время из
-         * UTC в часовой пояс этого пользователя
-         */
+
         return Carbon::createFromFormat('Y-m-d H:i:s', $value)
             ->timezone($this->timezone)
             ->format('d.m.Y H:i');

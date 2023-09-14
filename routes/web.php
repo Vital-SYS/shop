@@ -32,7 +32,7 @@ Route::group([
     'prefix' => 'catalog', // префикс маршрута, например catalog/index
 ], function () {
     // главная страница каталога
-    Route::get('index', [\App\Http\Controllers\CatalogController::class, 'index'])
+    Route::get('/', [\App\Http\Controllers\CatalogController::class, 'index'])
         ->name('index');
     // категория каталога товаров
     Route::get('category/{category:slug}', [\App\Http\Controllers\CatalogController::class, 'category'])
@@ -56,7 +56,7 @@ Route::group([
     'prefix' => 'basket', // префикс маршрута, например basket/index
 ], function () {
     // список всех товаров в корзине
-    Route::get('index', [\App\Http\Controllers\BasketController::class, 'index'])
+    Route::get('/', [\App\Http\Controllers\BasketController::class, 'index'])
         ->name('index');
     // страница с формой оформления заказа
     Route::get('checkout', [\App\Http\Controllers\BasketController::class, 'checkout'])
@@ -107,7 +107,7 @@ Route::group([
     'middleware' => ['auth'] // один или несколько посредников
 ], function () {
     // главная страница личного кабинета пользователя
-    Route::get('index', [\App\Http\Controllers\UserController::class, 'index'])->name('index');
+    Route::get('/', [\App\Http\Controllers\UserController::class, 'index'])->name('index');
     // CRUD-операции над профилями пользователя
     Route::resource('profile', \App\Http\Controllers\ProfileController::class);
     // просмотр списка заказов в личном кабинете
@@ -125,7 +125,7 @@ Route::group([
     'middleware' => ['auth', 'admin'] // один или несколько посредников
 ], function () {
     // главная страница панели управления
-    Route::get('index', [\App\Http\Controllers\Admin\IndexController::class, '__invoke'])->name('index');
+    Route::get('/', [\App\Http\Controllers\Admin\IndexController::class, '__invoke'])->name('index');
     // CRUD-операции над категориями каталога
     Route::resource('category', \App\Http\Controllers\Admin\CategoryController::class);
     // CRUD-операции над брендами каталога

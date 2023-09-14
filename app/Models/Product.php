@@ -31,43 +31,21 @@ class Product extends Model
         'sale',
     ];
 
-    /**
-     * Связь «товар принадлежит» таблицы `products` с таблицей `categories`
-     *
-     * @return BelongsTo
-     */
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    /**
-     * Связь «товар принадлежит» таблицы `products` с таблицей `brands`
-     *
-     * @return BelongsTo
-     */
     public function brand()
     {
         return $this->belongsTo(Brand::class);
     }
 
-    /**
-     * Связь «многие ко многим» таблицы `products` с таблицей `baskets`
-     *
-     * @return BelongsToMany
-     */
     public function baskets()
     {
         return $this->belongsToMany(Basket::class)->withPivot('quantity');
     }
 
-    /**
-     * Позволяет выбирать товары категории и всех ее потомков
-     *
-     * @param Builder $builder
-     * @param integer $id
-     * @return Builder
-     */
     public function scopeCategoryProducts($builder, $id)
     {
         $category = new Category();
@@ -76,25 +54,11 @@ class Product extends Model
         return $builder->whereIn('category_id', $descendants);
     }
 
-    /**
-     * Позволяет фильтровать товары по нескольким условиям
-     *
-     * @param Builder $builder
-     * @param ProductFilter $filters
-     * @return Builder
-     */
     public function scopeFilterProducts($builder, $filters)
     {
         return $filters->apply($builder);
     }
 
-    /**
-     * Позволяет искать товары по заданным словам
-     *
-     * @param Builder $query
-     * @param string $search
-     * @return Builder
-     */
     public function scopeSearch($query, $search)
     {
         // обрезаем поисковый запрос

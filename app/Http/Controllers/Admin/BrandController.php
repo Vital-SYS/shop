@@ -18,33 +18,17 @@ class BrandController extends Controller
         $this->imageSaver = $imageSaver;
     }
 
-    /**
-     * Показывает список всех брендов
-     *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Http\Response
-     */
     public function index()
     {
         $brands = Brand::all();
         return view('admin.brand.index', compact('brands'));
     }
 
-    /**
-     * Показывает форму для создания бренда
-     *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Http\Response
-     */
     public function create()
     {
         return view('admin.brand.create');
     }
 
-    /**
-     * Сохраняет новый бренд в базу данных
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
-     */
     public function store(BrandCatalogRequest $request)
     {
         $data = $request->all();
@@ -55,35 +39,16 @@ class BrandController extends Controller
             ->with('success', 'Новый бренд успешно создан');
     }
 
-    /**
-     * Показывает страницу бренда
-     *
-     * @param \App\Models\Brand $brand
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Http\Response
-     */
     public function show(Brand $brand)
     {
         return view('admin.brand.show', compact('brand'));
     }
 
-    /**
-     * Показывает форму для редактирования бренда
-     *
-     * @param \App\Models\Brand $brand
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Http\Response
-     */
     public function edit(Brand $brand)
     {
         return view('admin.brand.edit', compact('brand'));
     }
 
-    /**
-     * Обновляет бренд (запись в таблице БД)
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Brand $brand
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
-     */
     public function update(BrandCatalogRequest $request, Brand $brand)
     {
         $data = $request->all();
@@ -94,12 +59,6 @@ class BrandController extends Controller
             ->with('success', 'Бренд был успешно отредактирован');
     }
 
-    /**
-     * Удаляет бренд (запись в таблице БД)
-     *
-     * @param \App\Models\Brand $brand
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
-     */
     public function destroy(Brand $brand)
     {
         if ($brand->products->count()) {
